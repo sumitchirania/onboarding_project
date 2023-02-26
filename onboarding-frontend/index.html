@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<body onload="askForNotificationPermission()">
+
+<h1>My First Heading</h1>
+<p>My first paragraph.</p>
+<p>
+    Public Key
+
+BCvTCVssNZCGhH7sXE4qPfGIx_ib44HynMMCNu5uOOB-U-hayro4zR3uyxs7iu0NZVobUTgjEkJn_YFSVpBb0ng
+Private Key
+
+v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
+
+</p>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script>
+
+    const applicationServerPublicKey = 'BCvTCVssNZCGhH7sXE4qPfGIx_ib44HynMMCNu5uOOB-U-hayro4zR3uyxs7iu0NZVobUTgjEkJn_YFSVpBb0ng';
+    let swRegistration = null;
+    function urlB64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+    function askForNotificationPermission() {
+        alert(Notification.permission);
+
+        Notification.requestPermission().then((result) => {
+            if (result === 'granted') {
+                return checkPreRequisites();
+            } else {
+                throw new Error("Notification permission not granted!")
+            }
+        }).catch(function(error) {
+            console.error('Service Worker Error', error);
+        });
+    }
+
+    function checkPreRequisites() {
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            console.log('Service Worker and Push are supported');
+            navigator.serviceWorker.register('sw.js').then(function (swReg) {
+                console.log('Service Worker is registered', swReg);
+                console.log('This is the swReg', swReg);
+                console.log(swReg.installing);
+                console.log(swReg.waiting);
+                console.log(swReg.active);
+                swRegistration = swReg;
+                subscribeUser();
+            }).catch(function (error) {
+                console.error('Service Worker Error', error);
+            });
+        } else {
+            console.error('Push messaging is not supported');
+        }
+    }
+    function subscribeUser(){
+        const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+        swRegistration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: applicationServerKey
+        }).then(function(subscription) {
+            console.log('User is subscribed.');
+            let y = subscription.toJSON();
+            console.log('y is', y)
+            updateSubscriptionOnServer(subscription);
+        }).catch(function(error) {
+            console.error('Failed to subscribe the user: ', error);
+        });
+    }
+    function updateSubscriptionOnServer(subscription){
+        console.log('Now send to backend');
+        console.log('subscription is', subscription)
+        let y = subscription.toJSON();
+            console.log('y is', y)
+        let formData = JSON.stringify({
+            endpoint: y["endpoint"],
+            public_key: y["keys"]["p256dh"],
+            auth_key: y["keys"]["auth"]});
+
+        let headers = {
+        'Content-type': 'application/json; charset=UTF-8',
+        }
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/api/v1/subscriber/",
+            data: formData,
+            headers: headers,
+
+            success: function (res) {
+                if (res.status == 200) {
+                    alert(res.msg);
+                    console.log(res.msg);
+                }
+            },
+            error: function (res) {
+                console.log(res.msg);
+            }
+        });
+    }
+</script>
+<script src="main.js"></script>
+</body>
+</html>
