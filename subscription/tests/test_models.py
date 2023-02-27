@@ -3,7 +3,7 @@ from ..models.subscriber import Subscriber
 
 
 class SubscriberTest(TestCase):
-    """ Test module for Puppy model """
+    """ Test module for Subscriber model """
 
     first_test = {'endpoint': 'www.pushowl.com', 'public_key': 'public_key',
                   'auth_key': 'auth_key', 'name': 'pushowl'}
@@ -17,7 +17,7 @@ class SubscriberTest(TestCase):
     def test_subscriber(self):
         subscriber_sumit = Subscriber.objects.get(name='sumit')
         subscriber_pushowl = Subscriber.objects.get(name='pushowl')
-        print('Running Model tests')
+        print('Running Subscriber Model tests')
         self.assertEqual(
             subscriber_sumit.endpoint, "www.sumit.com")
         self.assertEqual(

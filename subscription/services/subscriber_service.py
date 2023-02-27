@@ -5,7 +5,7 @@ from ..models.subscriber import Subscriber
 logger = logging.getLogger(__name__)
 
 
-class SubscriberCrud(object):
+class SubscriberService(object):
 
     def __int__(self):
         pass
