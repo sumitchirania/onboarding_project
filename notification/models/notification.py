@@ -1,7 +1,7 @@
 
 from django.db import models
 
-from .mixins import DateTimeFieldMixin
+from common.models.mixins import DateTimeFieldMixin
 
 
 class Notification(DateTimeFieldMixin):

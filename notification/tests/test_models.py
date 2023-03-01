@@ -15,7 +15,6 @@ class NotificationTest(TestCase):
     def test_notification(self):
         notification_10 = Notification.objects.get(title='Flat 10% Off')
         notification_20 = Notification.objects.get(title='Flat 20% Off')
-        print('Running Notification Model tests')
         self.assertEqual(
             notification_10.desc, "Get Flat 10% Off on your first purchase.")
         self.assertEqual(

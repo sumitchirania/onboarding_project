@@ -5,12 +5,9 @@ from ..models.notification import Notification
 logger = logging.getLogger(__name__)
 
 
-class NotificationServices(object):
+class NotificationService:
 
-    def __int__(self):
-        pass
-
-    def get_notifications_list(self):
+    def get_notifications(self):
         return Notification.objects.all()
 
     def create_notification(self, data):

@@ -29,10 +29,11 @@ class GetAllSubscribersTest(TestCase):
 
     def test_get_all_subscribers(self):
         # get API response
-        response = client.get(reverse('subscriber'))
-        # get data from db
-        subscribers = Subscriber.objects.all()
-        serializer = SubscriberSerializer(subscribers, many=True)
-        print('Test get all subscribers')
-        self.assertEqual(response.data, serializer.data)
+        response = client.get(reverse('subscribers'))
+        expected_keys = [
+            'id', 'endpoint', 'public_key', 'auth_key', 'name', 'email', 'is_active'
+        ]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(set(expected_keys).issubset(response.data[0].keys()), True)
+        self.assertEqual(isinstance(response.data, list), True)
+

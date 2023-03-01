@@ -5,37 +5,34 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 
-# initialize the APIClient app
-client = Client()
-
-
 class CreateSubscribersTest(TestCase):
     """ Test module for create a subscriber API """
 
-    subscriber_valid_dummy_data = {'endpoint': 'www.subscriber1.com', 'public_key': 'some_public_key',
-                                   'auth_key': 'some_auth_key', 'name': 'subscriber1'}
-    subscriber_invalid_dummy_data = {'endpoint': '', 'public_key': 'some_public_key',
-                                     'auth_key': 'some_auth_key', 'name': 'subscriber2'}
-
     def setUp(self):
-        pass
+        self.client = Client()
+        self.subscriber_valid_dummy_data = {
+            'endpoint': 'www.subscriber1.com', 'public_key': 'some_public_key',
+            'auth_key': 'some_auth_key', 'name': 'subscriber1'
+        }
+        self.subscriber_invalid_dummy_data = {
+            'endpoint': '', 'public_key': 'some_public_key',
+            'auth_key': 'some_auth_key', 'name': 'subscriber2'
+        }
 
     def test_create_valid_subscriber(self):
         # get API response
-        response = client.post(
-            reverse('subscriber'),
-            data=json.dumps(CreateSubscribersTest.subscriber_valid_dummy_data),
+        response = self.client.post(
+            reverse('subscribers'),
+            data=json.dumps(self.subscriber_valid_dummy_data),
             content_type='application/json'
         )
-        print('creating a valid subscriber test')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_create_invalid_subscriber(self):
         # get API response
-        response = client.post(
-            reverse('subscriber'),
-            data=json.dumps(CreateSubscribersTest.subscriber_invalid_dummy_data),
+        response = self.client.post(
+            reverse('subscribers'),
+            data=json.dumps(self.subscriber_invalid_dummy_data),
             content_type='application/json'
         )
-        print('creating an invalid subscriber test')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

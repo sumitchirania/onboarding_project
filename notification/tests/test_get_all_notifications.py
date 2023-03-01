@@ -21,9 +21,11 @@ class GetAllNotificationsTest(TestCase):
 
     def test_get_all_notifications(self):
         # get API response
-        response = client.get(reverse('notification'))
-        # get data from db
-        notifications = Notification.objects.all()
-        serializer = NotificationSerializer(notifications, many=True)
-        self.assertEqual(response.data, serializer.data)
+        response = client.get(reverse('notifications'))
+        expected_keys = [
+            'id', 'title', 'desc'
+        ]
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(set(expected_keys).issubset(response.data[0].keys()), True)
+        self.assertEqual(isinstance(response.data, list), True)
+

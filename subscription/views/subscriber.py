@@ -13,14 +13,14 @@ class SubscriberView(APIView):
 
     def get(self, request):
 
-        subscriber_list = SubscriberService().get_subscribers_list()
-        return Response(SubscriberSerializer(subscriber_list, many=True).data, status=status.HTTP_200_OK)
+        subscriber_list = SubscriberService().get_subscribers()
+        data = SubscriberSerializer(subscriber_list, many=True).data
+        return Response(data, status=status.HTTP_200_OK)
 
     def post(self, request):
 
         serializer = SubscriberSerializer(data=request.data)
-        if serializer.is_valid():
-            subscriber = SubscriberService().create_subscriber(serializer.validated_data)
-            return Response(SubscriberSerializer(subscriber).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        subscriber = SubscriberService().create_subscriber(serializer.validated_data)
+        return Response(SubscriberSerializer(subscriber).data, status=status.HTTP_201_CREATED)
 

@@ -13,6 +13,20 @@ Private Key
 v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 
 </p>
+<div class="notification-body">
+    <form id="notification-form" name="notification">
+	    <h1>Create Notification</h1>
+	    <div class="field">
+		    <label for="title">Title:</label>
+		    <input type="text" id="title" name="title" placeholder="Enter a Catchy Title" />
+	    </div>
+	    <div class="field">
+		    <label for="description">Description:</label>
+		    <input type="text" id="desc" name="description" placeholder="Enter a Description" />
+	    </div>
+	    <button type="submit" class="create-notification-btn" id="submit-notification" value="Submit">Create</button>
+    </form>
+</div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 
 <script>
@@ -91,7 +105,7 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
         }
         $.ajax({
             type: "POST",
-            url: "http://localhost:8000/api/v1/subscriber/",
+            url: "http://localhost:8000/api/v1/subscribers/",
             data: formData,
             headers: headers,
 
@@ -106,7 +120,47 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             }
         });
     }
+
+    let notificationForm = document.getElementById("notification-form");
+    notificationForm.addEventListener('submit', function(event) {
+        event.preventDefault()
+        createNotification()
+    });
+
+    function createNotification(){
+        console.log('Creating Notification');
+        let title = document.getElementById('title').value;
+        let desc = document.getElementById('desc').value;
+        console.log('title is', title);
+        console.log('desc is', desc);
+        let formData = JSON.stringify({
+            title: title,
+            desc: desc});
+
+        let headers = {
+        'Content-type': 'application/json; charset=UTF-8',
+        }
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/api/v1/notifications/",
+            data: formData,
+            headers: headers,
+
+            success: function (res) {
+                if (res.status == 200) {
+                    alert(res.msg);
+                    console.log(res.msg);
+                }
+            },
+            error: function (res) {
+                console.log(res.msg);
+            }
+        });
+
+    }
 </script>
 <script src="main.js"></script>
+
+
 </body>
 </html>
