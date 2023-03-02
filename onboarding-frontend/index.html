@@ -27,7 +27,24 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 	    <button type="submit" class="create-notification-btn" id="submit-notification" value="Submit">Create</button>
     </form>
 </div>
+
+
+
+
+<table id="all-notifications" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+<table>
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+
 
 <script>
 
@@ -110,13 +127,14 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             headers: headers,
 
             success: function (res) {
-                if (res.status == 200) {
-                    alert(res.msg);
-                    console.log(res.msg);
+                if (res.status === 201) {
+                    console.log(res.data);
                 }
+                getNotifications();
+
             },
             error: function (res) {
-                console.log(res.msg);
+                console.log(res.data);
             }
         });
     }
@@ -147,16 +165,54 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             headers: headers,
 
             success: function (res) {
-                if (res.status == 200) {
-                    alert(res.msg);
-                    console.log(res.msg);
+                if (res.status === 200) {
+                    console.log(res.data);
                 }
             },
             error: function (res) {
-                console.log(res.msg);
+                console.log(res.data);
             }
         });
 
+    }
+
+    function getNotifications(){
+        alert('1111')
+        let headers = {
+        'Content-type': 'application/json; charset=UTF-8',
+        }
+        $.ajax({
+            type: "GET",
+            url: "http://localhost:8000/api/v1/notifications/",
+            headers: headers,
+
+            success: function (res) {
+                if (res.status === 200) {
+                    console.log(res.data);
+                    createTable(res.data);
+                }
+            },
+            error: function (res) {
+                console.log(res.data);
+            }
+        });
+
+    }
+
+    function createTable(data){
+
+        $('#all-notifications').DataTable( {
+        "aaData": data,
+        "columns": [
+            { "data": "id" },
+            { "data": "title" },
+            { "data": "description" },
+            {"mRender": function(data, type, full) {
+                return '<a class="btn btn-info btn-sm" href=#/' + full[0] + '>' + 'Send' + '</a>';
+            }
+            }
+        ]
+    })
     }
 </script>
 <script src="main.js"></script>
