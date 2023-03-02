@@ -29,17 +29,18 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 </div>
 
 
-
-
-<table id="all-notifications" class="display" style="width:100%">
-    <thead>
+<h1>Displaying Notifications</h1>
+<div id="notification-table">
+    <table id="all-notifications" class="display">
+        <thead>
         <tr>
             <th>ID</th>
             <th>Title</th>
             <th>Description</th>
         </tr>
-    </thead>
-<table>
+        </thead>
+    </table>
+</div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
@@ -187,9 +188,12 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             headers: headers,
 
             success: function (res) {
+                alert('success11');
+                alert(res);
+                renderDataInTheTable(res);
                 if (res.status === 200) {
+                    alert('success')
                     console.log(res.data);
-                    createTable(res.data);
                 }
             },
             error: function (res) {
@@ -199,21 +203,53 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 
     }
 
-    function createTable(data){
-
-        $('#all-notifications').DataTable( {
-        "aaData": data,
-        "columns": [
-            { "data": "id" },
-            { "data": "title" },
-            { "data": "description" },
-            {"mRender": function(data, type, full) {
-                return '<a class="btn btn-info btn-sm" href=#/' + full[0] + '>' + 'Send' + '</a>';
-            }
-            }
-        ]
-    })
+    function renderDataInTheTable(notifications) {
+            let myTable = document.getElementById("all-notifications");
+            notifications.forEach(notification => {
+                let newRow = document.createElement("tr");
+                Object.values(notification).forEach((value) => {
+                    let cell = document.createElement("td");
+                    cell.innerText = value
+                    newRow.appendChild(cell);
+                })
+                let button = document.createElement('button');
+                    button.type = 'button';
+                    button.onclick=sendPushNotification();
+                    button.textContent = 'Send';
+                    newRow.append(button);
+                myTable.appendChild(newRow);
+            });
     }
+
+    function sendPushNotification(){
+
+        let formData = JSON.stringify({
+            notification_id: 1
+        });
+
+        let headers = {
+        'Content-type': 'application/json; charset=UTF-8',
+        }
+        $.ajax({
+            type: "POST",
+            url: "http://localhost:8000/api/v1/push-notification/",
+            data: formData,
+            headers: headers,
+
+            success: function (res) {
+                if (res.status === 200) {
+                    console.log(res.data);
+                }
+            },
+            error: function (res) {
+                console.log(res.data);
+            }
+        });
+
+
+
+    }
+
 </script>
 <script src="main.js"></script>
 

@@ -113,6 +113,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Celery settings
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+
+PRIVATE_KEY = ""
+ADMIN_MAIL = ""
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
