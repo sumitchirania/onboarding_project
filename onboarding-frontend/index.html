@@ -2,27 +2,32 @@
 <html>
 <body onload="askForNotificationPermission()">
 
-<h1>My First Heading</h1>
-<p>My first paragraph.</p>
+<h1>Onboarding Project</h1>
+<p>Sending a Push Notification</p>
 <p>
-    Public Key
+<h2>Public Key</h2>
 
 BCvTCVssNZCGhH7sXE4qPfGIx_ib44HynMMCNu5uOOB-U-hayro4zR3uyxs7iu0NZVobUTgjEkJn_YFSVpBb0ng
-Private Key
+
+<h2>Private Key</h2>
 
 v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 
 </p>
+
+<p> Subscribing the User, Creating a Notification and sending that notification to all the subscribers</p>
+
+
 <div class="notification-body">
     <form id="notification-form" name="notification">
 	    <h1>Create Notification</h1>
 	    <div class="field">
 		    <label for="title">Title:</label>
-		    <input type="text" id="title" name="title" placeholder="Enter a Catchy Title" />
+		    <input type="text" id="title" name="title" placeholder="Enter a Catchy Title" /><br><br>
 	    </div>
 	    <div class="field">
 		    <label for="description">Description:</label>
-		    <input type="text" id="desc" name="description" placeholder="Enter a Description" />
+		    <input type="text" id="desc" name="description" placeholder="Enter a Description" /><br><br>
 	    </div>
 	    <button type="submit" class="create-notification-btn" id="submit-notification" value="Submit">Create</button>
     </form>
@@ -51,6 +56,7 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
 
     const applicationServerPublicKey = 'BCvTCVssNZCGhH7sXE4qPfGIx_ib44HynMMCNu5uOOB-U-hayro4zR3uyxs7iu0NZVobUTgjEkJn_YFSVpBb0ng';
     let swRegistration = null;
+    let isSubscribed = false;
     function urlB64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
         const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
@@ -96,6 +102,14 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
     }
     function subscribeUser(){
         const applicationServerKey = urlB64ToUint8Array(applicationServerPublicKey);
+        swRegistration.pushManager.getSubscription().then(function(subscription) {
+            isSubscribed = !(subscription === null);
+            if (isSubscribed) {
+                console.log('User IS subscribed.');
+            } else {
+                console.log('User is NOT subscribed.');
+            }
+        });
         swRegistration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: applicationServerKey
@@ -178,7 +192,6 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
     }
 
     function getNotifications(){
-        alert('1111')
         let headers = {
         'Content-type': 'application/json; charset=UTF-8',
         }
@@ -188,11 +201,8 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             headers: headers,
 
             success: function (res) {
-                alert('success11');
-                alert(res);
                 renderDataInTheTable(res);
                 if (res.status === 200) {
-                    alert('success')
                     console.log(res.data);
                 }
             },
@@ -207,24 +217,31 @@ v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk
             let myTable = document.getElementById("all-notifications");
             notifications.forEach(notification => {
                 let newRow = document.createElement("tr");
-                Object.values(notification).forEach((value) => {
+                let notification_id = null;
+                Object.entries(notification).forEach((entry) => {
                     let cell = document.createElement("td");
-                    cell.innerText = value
+                    if (entry[0] === 'id'){
+                        notification_id = entry[1];
+                    }
+                    cell.innerText = entry[1]
                     newRow.appendChild(cell);
                 })
                 let button = document.createElement('button');
                     button.type = 'button';
-                    button.onclick=sendPushNotification();
+                    button.onclick = function(){
+                        sendPushNotification(notification_id);
+                    }
                     button.textContent = 'Send';
                     newRow.append(button);
                 myTable.appendChild(newRow);
             });
     }
 
-    function sendPushNotification(){
-
+    function sendPushNotification(notification_id){
+        console.log('notification_id');
+        console.log(notification_id);
         let formData = JSON.stringify({
-            notification_id: 1
+            notification_id: notification_id
         });
 
         let headers = {

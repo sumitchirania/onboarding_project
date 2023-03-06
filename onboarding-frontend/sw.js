@@ -1,10 +1,13 @@
 
 
 self.addEventListener('push', function(event) {
-    let message = JSON.parse(event.data.text());
-    event.waitUntil(
-        self.registration.showNotification(message.title, {
-            body: message.body,
-        })
-    );
+  console.log('[Service Worker] Push Received.');
+  console.log('[Service Worker] Push had this data: "${event.data.text()}"');
+  const message = event.data.json();
+  const title = message["title"];
+  const options = {
+    body: message["desc"]
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
 });
+

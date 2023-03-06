@@ -14,8 +14,8 @@ class NotificationAPIService:
             notification = Notification.objects.get(pk=notification_id)
             data = NotificationSerializer(notification).data
             return {
-                'title': data.get('title', ''),
-                'desc': data.get('desc', '')
+                "title": data.get('title', ''),
+                "desc": data.get('desc', '')
             }
         except Notification.DoesNotExist:
             return {}

@@ -117,8 +117,8 @@ AUTH_PASSWORD_VALIDATORS = [
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
 
-PRIVATE_KEY = ""
-ADMIN_MAIL = ""
+PRIVATE_KEY = "v7hs4VDMqbQGQ595hfaBg3ZwhZPhCCu1UpTgpMsJzjk"
+ADMIN_EMAIL = "kumarchirania@gmail.com"
 
 
 # Internationalization
