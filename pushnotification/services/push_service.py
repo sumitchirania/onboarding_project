@@ -18,16 +18,16 @@ class PushService:
             return Response({"success": False,
                              "msg": 'Notification not found for notification id {}'.format(notification_id)},
                             status=status.HTTP_400_BAD_REQUEST)
-        try:
-            subscribers = SubscriberAPIService().get_all_active_subscribers()
-            for subscriber in subscribers:
-                subscription_data = {
-                    "endpoint": subscriber.endpoint,
-                    "keys": {
-                        "auth": subscriber.auth_key,
-                        "p256dh": subscriber.public_key
-                    }
+        subscribers = SubscriberAPIService().get_all_active_subscribers()
+        for subscriber in subscribers:
+            subscription_data = {
+                "endpoint": subscriber.endpoint,
+                "keys": {
+                    "auth": subscriber.auth_key,
+                    "p256dh": subscriber.public_key
                 }
-                task_send_notification.delay(subscription_data, notification_data)
-        except Exception as e:
-            print(e,'errror')
+            }
+            task_send_notification.delay(subscription_data, notification_data)
+        return Response({"success": True,
+                         "msg": 'WebPush Notification success for notification id {}'.format(notification_id)},
+                        status=status.HTTP_200_OK)
